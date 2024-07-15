@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @unique
+  username String
+  email    String @unique
+  imageUrl String
+
+  members Member[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  channels  Channel[]
+  servers   Server[]
+}
+
+model Server {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  imageUrl String
+  inviteCode String
+
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String  @db.ObjectId
+
+  members  Member[]
+  channels Channel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ChannelType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Channel {
+  id   String      @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  type ChannelType @default(TEXT)
+
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String  @db.ObjectId
+
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  serverId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member {
+  id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  role MemberRole
+
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String  @db.ObjectId
+
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  serverId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+}
