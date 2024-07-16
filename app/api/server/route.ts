@@ -41,7 +41,6 @@ export const POST = async (req: Request, res: NextResponse<ResponseData>) => {
         name,
         profileId,
         imageUrl,
-        inviteCode: uuid(),
         channels: {
           create: [{ name: "general", profileId: profileId }],
         },
@@ -54,5 +53,33 @@ export const POST = async (req: Request, res: NextResponse<ResponseData>) => {
     return new NextResponse(JSON.stringify(server), { status: 201 });
   } catch (error) {
     console.log("Error while creating server:", error);
+    return new NextResponse(JSON.stringify(error), { status: 400 });
+  }
+};
+
+export const PATCH = async (req: Request, res: NextResponse<ResponseData>) => {
+  try {
+    const body = await req.json();
+
+    const { serverId } = body;
+
+    const server = await db.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        inviteCode: uuid(),
+      },
+    });
+    return new NextResponse(
+      JSON.stringify({
+        success: true,
+        message: "Invite code regenarted successfully",
+        server,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    return new NextResponse(JSON.stringify(error), { status: 400 });
   }
 };

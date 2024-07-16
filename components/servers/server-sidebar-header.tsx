@@ -1,6 +1,4 @@
-import { db } from "@/lib/db";
-import { ChevronDown } from "lucide-react";
-import { redirect } from "next/navigation";
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,17 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import useModal from "@/hooks/useModal";
+import { Server } from "@prisma/client";
+import { ChevronDown } from "lucide-react";
 
-const ServerSidebarHeader = async ({ serverId }: { serverId: string }) => {
-  const server = await db.server.findUnique({
-    where: {
-      id: serverId,
-    },
-  });
 
-  console.log("server::::", server);
-
-  if (!server) return redirect("/");
+const ServerSidebarHeader =  ({ server }: { server: Server }) => {
+  const { onOpen } = useModal();
 
   return (
     <DropdownMenu>
@@ -30,7 +24,12 @@ const ServerSidebarHeader = async ({ serverId }: { serverId: string }) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel className="w-full">Invite</DropdownMenuLabel>
+        <DropdownMenuLabel
+          className="w-full"
+          onClick={() => onOpen("invite", { server })}
+        >
+          Invite
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuItem>Billing</DropdownMenuItem>

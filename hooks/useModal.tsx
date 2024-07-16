@@ -10,7 +10,7 @@ interface useModalProps {
   type: ModalType | null;
   isOpen: boolean;
   data?: ModalData;
-  onOpen: (type: ModalType) => void;
+  onOpen: (type: ModalType, data: ModalData) => void;
   onClose: () => void;
 }
 

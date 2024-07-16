@@ -1,65 +1,95 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import FileUpload from "@/components/file-upload";
-import axios from "axios";
 import useModal from "@/hooks/useModal";
-import { initialProfile } from "@/lib/initial-profile";
-import { useRouter } from "next/navigation";
-
-const formSchema = z.object({
-  serverName: z
-    .string()
-    .min(2, {
-      message: "Server name must be at least 2 characters.",
-    })
-    .max(50),
-  serverImageUrl: z.string(),
-});
+import axios from "axios";
+import { ClipboardCheck, Copy, RefreshCcw } from "lucide-react";
+import { useState } from "react";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 const InviteModal = () => {
-  const router = useRouter();
-  const { type, isOpen, onClose } = useModal();
+  const { type, isOpen, onClose, onOpen, data } = useModal();
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleClose = () => {};
+  const handleClose = () => {
+    onClose();
+  };
+
+  const copyInviteCode = () => {
+    if (data?.server?.inviteCode && !loading) {
+      navigator.clipboard.writeText(
+        `${window.location.origin}/invite/${data.server.inviteCode}`
+      );
+
+      document.getElementById("inviteCode")?.focus();
+      setCodeCopied(true);
+
+      setTimeout(() => {
+        setCodeCopied(false);
+      }, 1000);
+    }
+  };
+
+  const regenarateInviteCode = async () => {
+    if (loading) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.patch("/api/server", {
+        serverId: data?.server?.id,
+      });
+
+      console.log("response:::", response);
+      if (response.data.success) {
+        setLoading(false);
+        onOpen("invite", { server: response.data.server });
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log("Error while regenerating invite code of the server", error);
+    }
+  };
 
   return (
     <Dialog open={type === "invite" && isOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black">
         <DialogHeader>
           <DialogTitle className="text-center font-bold text-xl">
-            Customize your server
+            Invite Code
           </DialogTitle>
           <DialogDescription className="text-center">
-            Give your server a personality with a name and image. You can always
-            change it later.
+            Sent this link to your friends to invite them on your server
           </DialogDescription>
         </DialogHeader>
+        <div className="space-y-2">
+          <Label className="uppercase mb-0 text-zinc-500">Invite code</Label>
+          <div className="flex justify-center items-center">
+            <Input
+              className="bg-white mt-0 outline-none"
+              value={data?.server?.inviteCode}
+              id="inviteCode"
+              disabled={loading}
+            />
+            {codeCopied ? (
+              <ClipboardCheck className="ml-2" />
+            ) : (
+              <Copy className="ml-2" onClick={copyInviteCode} />
+            )}
+          </div>
+          <div className="flex items-center" onClick={regenarateInviteCode}>
+            <p>Regenerate invite code</p>
+            <RefreshCcw size={15} className="ml-2" />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

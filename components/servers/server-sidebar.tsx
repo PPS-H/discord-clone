@@ -31,7 +31,7 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
   if (!server) return redirect("/");
   return (
     <div className="p-2">
-      <ServerSidebarHeader serverId={serverId} />
+      <ServerSidebarHeader server={server} />
     </div>
   );
 };
