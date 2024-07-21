@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/file-upload";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   serverName: z
@@ -41,6 +42,7 @@ const formSchema = z.object({
 
 const InitialModal = ({ userId }: { userId?: string }) => {
   const [imageUrl, setImageUrl] = useState("");
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,10 +58,11 @@ const InitialModal = ({ userId }: { userId?: string }) => {
       const response = await axios.post("/api/server", {
         name: serverName,
         imageUrl: serverImageUrl,
-        userId
+        userId,
       });
 
       console.log("response is :", response);
+      router.refresh();
     } catch (error) {
       console.log("Error while creating server:", error);
     }

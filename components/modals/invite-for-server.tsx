@@ -75,7 +75,7 @@ const InviteModal = () => {
           <div className="flex justify-center items-center">
             <Input
               className="bg-white mt-0 outline-none"
-              value={data?.server?.inviteCode}
+              value={`${window.location.origin}/invite/${data?.server?.inviteCode}`}
               id="inviteCode"
               disabled={loading}
             />

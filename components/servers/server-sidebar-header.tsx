@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useModal from "@/hooks/useModal";
 import { ServerWithChannelsWithMembers } from "@/types";
@@ -27,7 +27,7 @@ const ServerSidebarHeader = ({
   role: MemberRole;
 }) => {
   const { onOpen } = useModal();
-
+  console.log("role here:::", role);
   const isAdmin = role === MemberRole.ADMIN;
   const isMod = role === MemberRole.MODERATOR || isAdmin;
 
@@ -70,7 +70,7 @@ const ServerSidebarHeader = ({
         {isMod && (
           <DropdownMenuItem
             className="px-3 py-2 text-sm cursor-pointer"
-            // onClick={() => onOpen('createChannel')}
+            onClick={() => onOpen("createChannel", { server })}
           >
             Create Channel
             <PlusCircle className="h-4 w-4 ml-auto" />
@@ -80,7 +80,7 @@ const ServerSidebarHeader = ({
         {isAdmin && (
           <DropdownMenuItem
             className="text-rose-500 px-3 py-2 text-sm cursor-pointer"
-            // onClick={() => onOpen('deleteServer', { server })}
+            onClick={() => onOpen('deleteServer', { server })}
           >
             Delete Server
             <Trash className="h-4 w-4 ml-auto" />

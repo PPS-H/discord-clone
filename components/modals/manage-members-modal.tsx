@@ -34,6 +34,7 @@ const ManageMembersModal = () => {
           {memebers?.map((member) => (
             <Member
               key={member.id}
+              id={member.id}
               name={member.profile.username}
               email={member.profile.email}
               imageUrl={member.profile.imageUrl}

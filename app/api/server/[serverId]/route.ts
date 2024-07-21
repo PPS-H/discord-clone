@@ -60,9 +60,64 @@ export const PATCH = async (
       }),
       { status: 200 }
     );
-
-
   } catch (error) {
     return new NextResponse(JSON.stringify(error), { status: 400 });
+  }
+};
+
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { serverId: string } }
+) => {
+  try {
+    const { serverId } = params;
+
+    const user = await initialProfile();
+
+    if (!user)
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "Unauthorized",
+        }),
+        { status: 401 }
+      );
+
+    const memeber = await db.member.findFirst({
+      where: {
+        profileId: user.id,
+      },
+    });
+
+    if (memeber?.role !== MemberRole.ADMIN)
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          message: "You are not authorized to delete the server.",
+        }),
+        { status: 400 }
+      );
+
+    await db.server.delete({
+      where: {
+        id: serverId,
+      },
+    });
+
+    return new NextResponse(
+      JSON.stringify({
+        success: true,
+        message: "Server deleted successfully",
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        error,
+      }),
+      { status: 400 }
+    );
   }
 };

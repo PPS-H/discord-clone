@@ -17,13 +17,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MemberRole } from "@prisma/client";
+import axios from "axios";
+import useModal from "@/hooks/useModal";
+import { useRouter } from "next/navigation";
 
 const Member = ({
+  id,
   name,
   email,
   imageUrl,
   role,
 }: {
+  id: string;
   name: string;
   email: string;
   imageUrl: string;
@@ -32,6 +37,41 @@ const Member = ({
   const isAdmin = role === MemberRole.ADMIN;
   const isMod = role === MemberRole.MODERATOR;
   const isGuest = role === MemberRole.GUEST;
+
+  const { onOpen } = useModal();
+  const router = useRouter();
+
+  const handleChangeRole = async (id: string, role: MemberRole) => {
+    try {
+      const response = await axios.patch(`/api/member/${id}`, {
+        role,
+      });
+      console.log(response);
+      if (response.data.success) {
+        onOpen("members", { server: response.data.server });
+        router.refresh();
+      }
+    } catch (error) {
+      console.log("Error while updating memeber role:", error);
+    }
+  };
+
+  const handleRemoveMember = async (id: string) => {
+    try {
+      const response = await axios.patch(`/api/member/${id}`, {
+        kick: true,
+      });
+      console.log(response, response.data.success);
+      if (response.data.success) {
+        console.log("enter ");
+        onOpen("members", { server: response.data.server });
+        router.refresh();
+      }
+    } catch (error) {
+      console.log("Error while updating memeber role:", error);
+    }
+  };
+
   return (
     <div className="flex items-center my-2">
       <div>
@@ -66,16 +106,28 @@ const Member = ({
                     <DropdownMenuItem>Role</DropdownMenuItem>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="left">
-                    <DropdownMenuItem className="flex items-center cursor-pointer text-xs">
-                      {isMod && <Check />}
+                    <DropdownMenuItem
+                      className="flex items-center cursor-pointer text-xs"
+                      onClick={() => {
+                        !isMod && handleChangeRole(id, MemberRole.MODERATOR);
+                      }}
+                    >
+                      {isMod && <Check size={12} />}
                       {MemberRole.MODERATOR}
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="flex items-center cursor-pointer text-xs space-x-2">
+                    <DropdownMenuItem
+                      className="flex items-center cursor-pointer text-xs space-x-2"
+                      onClick={() => {
+                        !isGuest && handleChangeRole(id, MemberRole.GUEST);
+                      }}
+                    >
                       {isGuest && <Check size={12} />}
                       {MemberRole.GUEST}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                  <DropdownMenuItem>Kick</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleRemoveMember(id)}>
+                    Kick
+                  </DropdownMenuItem>
                 </DropdownMenu>
               </DropdownMenuContent>
             </DropdownMenu>
