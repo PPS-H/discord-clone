@@ -47,7 +47,7 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
   const roleIconMap = {
     [MemberRole.GUEST]: "",
     [MemberRole.MODERATOR]: <ShieldCheck />,
-    [MemberRole.ADMIN]: <ShieldAlert size={8}/>,
+    [MemberRole.ADMIN]: <ShieldAlert size={8} />,
   };
 
   useEffect(() => {
@@ -62,14 +62,14 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
   }, []);
   return (
     <>
-      <div className="border border-netural-200 p-1">
+      <div className="border-netural-200 p-1">
         <button
           className="flex items-center justify-between w-full"
           onClick={() => setOpen(true)}
         >
           <div className="flex items-center">
-            <Search size={12} />
-            <p className="ml-2 text-zinc-300 text-xs">Search...</p>
+            <Search size={12} color="rgb(161 161 170)" />
+            <p className="ml-2 text-zinc-400 text-xs">Search...</p>
           </div>
           <div className="text-xs bg-gray-800 px-1">
             <kbd>
@@ -82,9 +82,9 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
         <CommandInput placeholder="Search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {data.map((item) => {
+          {data.map((item, index) => {
             return (
-              <>
+              <div key={index}>
                 <CommandGroup heading={item.heading}>
                   {item.items.map((channelName: string) => (
                     <CommandItem>
@@ -94,14 +94,14 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
                   ))}
                 </CommandGroup>
                 <CommandSeparator />
-              </>
+              </div>
             );
           })}
           <CommandGroup heading="Server Members">
-            {members.map((member) => (
-              <CommandItem>
+            {members.map((member, index) => (
+              <CommandItem key={index}>
                 {member.name}
-               {roleIconMap[member.role]}
+                {roleIconMap[member.role]}
               </CommandItem>
             ))}
           </CommandGroup>

@@ -4,7 +4,10 @@ import { initialProfile } from "@/lib/initial-profile";
 import { redirect } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import ServerSearch from "./server-search";
-import { ChannelType } from "@prisma/client";
+import ServerChannel from "./server-channel";
+import { ChannelType, MemberRole } from "@prisma/client";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import ServerMembers from "./server-member";
 
 const ServerSideBar = async ({ serverId }: { serverId: string }) => {
   const user = await initialProfile();
@@ -51,12 +54,14 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
   console.log("textChannels:::", textChannels);
 
   const members = server.members.map((member) => ({
+    id: member.id,
     name: member.profile.username,
     role: member.role,
+    imageUrl:member.profile.imageUrl
   }));
 
   return (
-    <div className="p-2">
+    <div className="p-2 dark:bg-[#2B2D31] bg-[#F2F3F5] min-h-screen">
       <ServerSidebarHeader server={server} role={role!} />
       <ScrollArea className="mt-4">
         <ServerSearch
@@ -64,21 +69,43 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
             {
               heading: "Text Channels",
               items: textChannels.map((channel) => channel.name),
-              type:ChannelType.TEXT
+              type: ChannelType.TEXT,
             },
             {
               heading: "Audio Channels",
               items: audioChannels.map((channel) => channel.name),
-              type:ChannelType.AUDIO
+              type: ChannelType.AUDIO,
             },
             {
               heading: "Video Channels",
               items: videoChannels.map((channel) => channel.name),
-              type:ChannelType.VIDEO
+              type: ChannelType.VIDEO,
             },
           ]}
           members={members}
         />
+
+        <Separator className="mt-2 border" />
+
+        <ServerChannel
+          role={role!}
+          channelType={ChannelType.TEXT}
+          channels={textChannels}
+        />
+
+        <ServerChannel
+          role={role!}
+          channelType={ChannelType.AUDIO}
+          channels={audioChannels}
+        />
+
+        <ServerChannel
+          role={role!}
+          channelType={ChannelType.VIDEO}
+          channels={videoChannels}
+        />
+        <Separator />
+        <ServerMembers members={members} />
       </ScrollArea>
     </div>
   );
