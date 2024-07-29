@@ -71,7 +71,7 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
             <Search size={12} color="rgb(161 161 170)" />
             <p className="ml-2 text-zinc-400 text-xs">Search...</p>
           </div>
-          <div className="text-xs bg-gray-800 px-1">
+          <div className="text-xs dark:bg-gray-800 px-1">
             <kbd>
               <span className="text-[9px]">⌘</span>+k
             </kbd>

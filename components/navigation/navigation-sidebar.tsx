@@ -23,7 +23,7 @@ const NavigationSidebar = async () => {
   });
   // console.log("servers:::", servers);
   return (
-    <div className="dark:bg-black bg-white h-full ">
+    <div className="dark:bg-black bg-[#E3E5E8] h-full ">
       <div className="">
         <NavigationAction />
         <Separator />
@@ -36,7 +36,7 @@ const NavigationSidebar = async () => {
       </ScrollArea>
 
       <div className="absolute bottom-5 flex flex-col justify-center items-center space-y-4 w-full">
-        <ModeToggle />
+        <ModeToggle/>
         <UserButton/>
       </div>
     </div>

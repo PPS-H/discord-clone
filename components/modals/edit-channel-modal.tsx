@@ -1,19 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -21,8 +8,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
 import {
   Select,
@@ -33,11 +30,11 @@ import {
 } from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
-import FileUpload from "@/components/file-upload";
-import axios from "axios";
 import useModal from "@/hooks/useModal";
-import { useParams, useRouter } from "next/navigation";
 import { ChannelType } from "@prisma/client";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   channelName: z
@@ -49,7 +46,7 @@ const formSchema = z.object({
   channelType: z.string().min(1, { message: "Channel type cannot be empty" }),
 });
 
-const CreateChannelModal = () => {
+const EditChannelModal = () => {
   const router = useRouter();
   const { type, isOpen, onClose, data } = useModal();
 
@@ -65,8 +62,7 @@ const CreateChannelModal = () => {
     const { channelName, channelType } = values;
 
     try {
-      const response = await axios.post(`/api/channel/`, {
-        serverId: data?.server?.id,
+      const response = await axios.patch(`/api/channel/${data?.channelId}`, {
         channelName,
         channelType,
       });
@@ -88,17 +84,14 @@ const CreateChannelModal = () => {
   };
 
   return (
-    <Dialog
-      open={type === "createChannel" && isOpen}
-      onOpenChange={handleClose}
-    >
+    <Dialog open={type === "editChannel" && isOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black">
         <DialogHeader>
           <DialogTitle className="text-center font-bold text-xl">
-            Create New Channel
+            Edit Channel
           </DialogTitle>
           <DialogDescription className="text-center">
-            Give your channels a personality with a name and type.
+            Edit your channel name.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -134,10 +127,8 @@ const CreateChannelModal = () => {
                       render={({ field }) => (
                         <Select
                           onValueChange={field.onChange}
-                          value={
-                            data?.channelType ? data.channelType : field.value
-                          }
                           disabled={isLoading}
+                          defaultValue={data?.channelType}
                         >
                           <SelectTrigger className="text-black bg-zinc-300/50  border-0 focus:visible:right-0 focus:visible:ring-offset-0">
                             <SelectValue placeholder="Select channel type" />
@@ -167,7 +158,7 @@ const CreateChannelModal = () => {
                 className="bg-indigo-500 text-white hover:bg-indigo-500/90"
                 disabled={isLoading}
               >
-                Create
+                Edit
               </Button>
             </DialogFooter>
           </form>
@@ -177,4 +168,4 @@ const CreateChannelModal = () => {
   );
 };
 
-export default CreateChannelModal;
+export default EditChannelModal;

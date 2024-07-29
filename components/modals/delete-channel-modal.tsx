@@ -13,37 +13,36 @@ import axios from "axios";
 import { Button } from "../ui/button";
 import { redirect, useRouter } from "next/navigation";
 
-const DeleteServerModal = () => {
+const DeleteChannelModal = () => {
   const { type, isOpen, onClose, data } = useModal();
   const router = useRouter();
   const handleClose = () => {
     onClose();
   };
 
-  const id = data?.server?.id;
 
-  const handleDeleteServer = async () => {
+  const handleDeleteChannel = async () => {
     try {
-      const response = await axios.delete(`/api/server/${id}`);
+      const response = await axios.delete(`/api/channel/${data?.channelId}`);
       if (response.data.success) {
         onClose();
         router.refresh();
         redirect("/");
       }
     } catch (error) {
-      console.log("Error while deleting server:", error);
+      console.log("Error while deleting channel:", error);
     }
   };
 
   return (
-    <Dialog open={type === "deleteServer" && isOpen} onOpenChange={handleClose}>
+    <Dialog open={type === "deleteChannel" && isOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black">
         <DialogHeader>
           <DialogTitle className="text-center font-bold text-xl">
-            Delete server
+            Delete channel
           </DialogTitle>
           <DialogDescription className="text-center">
-            Are you sure you want to delete this server ? This action can't be
+            Are you sure you want to delete this channel ? This action can't be
             undone.
           </DialogDescription>
         </DialogHeader>
@@ -53,7 +52,7 @@ const DeleteServerModal = () => {
           </Button>
           <Button
             className="bg-indigo-500 hover:bg-indigo-600 text-white"
-            onClick={handleDeleteServer}
+            onClick={handleDeleteChannel}
           >
             Delete
           </Button>
@@ -63,4 +62,4 @@ const DeleteServerModal = () => {
   );
 };
 
-export default DeleteServerModal;
+export default DeleteChannelModal;

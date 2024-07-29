@@ -6,19 +6,17 @@ import { FC, ReactNode } from "react";
 
 interface serverLayoutProps {
   children: ReactNode;
-  params: { id: string };
+  params: { serverId: string };
 }
 
 const ServerLayout: FC<serverLayoutProps> = async ({ children, params }) => {
   const user = await initialProfile();
 
-  console.log("user here", params);
-
   if (!user) return redirect("/");
 
   const server = await db.server.findUnique({
     where: {
-      id: params.id,
+      id: params.serverId,
       members: {
         some: {
           profileId: user.id,
@@ -31,10 +29,10 @@ const ServerLayout: FC<serverLayoutProps> = async ({ children, params }) => {
 
   return (
     <div className="flex">
-      <div className="h-full w-60">
-        <ServerSideBar serverId={params.id} />
+      <div className="hidden md:block h-full w-60">
+        <ServerSideBar serverId={params.serverId} />
       </div>
-      <main className="h-full">{children}</main>
+      <main className="h-full md:w-[calc(100%-15rem)] w-full">{children}</main>
     </div>
   );
 };

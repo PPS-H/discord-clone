@@ -12,7 +12,7 @@ import ServerMembers from "./server-member";
 const ServerSideBar = async ({ serverId }: { serverId: string }) => {
   const user = await initialProfile();
 
-  console.log("user is user:::", user);
+  // console.log("user is user:::", user);
 
   const server = await db.server.findUnique({
     where: {
@@ -38,7 +38,7 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
 
   const role = member?.role;
 
-  console.log("server::::", server);
+  // console.log("server::::", server);
   // console.log("role::::", role);
 
   const textChannels = server.channels.filter(
@@ -51,13 +51,13 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
     (channel) => channel.type === ChannelType.VIDEO
   );
 
-  console.log("textChannels:::", textChannels);
+  // console.log("textChannels:::", textChannels);
 
   const members = server.members.map((member) => ({
     id: member.id,
     name: member.profile.username,
     role: member.role,
-    imageUrl:member.profile.imageUrl
+    imageUrl: member.profile.imageUrl,
   }));
 
   return (
@@ -91,21 +91,24 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
           role={role!}
           channelType={ChannelType.TEXT}
           channels={textChannels}
+          server={server}
         />
 
         <ServerChannel
           role={role!}
           channelType={ChannelType.AUDIO}
           channels={audioChannels}
+          server={server}
         />
 
         <ServerChannel
           role={role!}
           channelType={ChannelType.VIDEO}
           channels={videoChannels}
+          server={server}
         />
         <Separator />
-        <ServerMembers members={members} />
+        <ServerMembers members={members} server={server} />
       </ScrollArea>
     </div>
   );

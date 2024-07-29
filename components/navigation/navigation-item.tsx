@@ -18,7 +18,7 @@ const NavigationItem = ({ id, name, imageUrl }: NavigationItemProps) => {
     <div className="flex items-center">
       <div
         className={cn(
-          "bg-white w-[3px] rounded-lg",
+          "dark:bg-white bg-black w-[3px] rounded-lg",
           serverId === id ? "h-[30px]" : "h-[10px]"
         )}
       ></div>
