@@ -36,6 +36,8 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
 
   const member = server.members.find((member) => member.profileId === user.id);
 
+  if (!member) redirect("/");
+
   const role = member?.role;
 
   // console.log("server::::", server);
@@ -108,7 +110,7 @@ const ServerSideBar = async ({ serverId }: { serverId: string }) => {
           server={server}
         />
         <Separator />
-        <ServerMembers members={members} server={server} />
+        <ServerMembers loggedInMember={member.id} members={members} server={server} />
       </ScrollArea>
     </div>
   );

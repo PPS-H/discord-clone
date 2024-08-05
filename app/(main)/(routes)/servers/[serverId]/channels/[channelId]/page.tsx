@@ -1,4 +1,5 @@
 import ChannelHeader from "@/components/channels/channel-header";
+import ChatInput from "@/components/chat/chat-input";
 import { db } from "@/lib/db";
 import { initialProfile } from "@/lib/initial-profile";
 import { redirect } from "next/navigation";
@@ -24,8 +25,14 @@ const ChannelIdPage = async ({ params }: ChannelIdProps) => {
   if (!channel) return redirect("/");
 
   return (
-    <div className="w-full">
-      <ChannelHeader content={channel.name} serverId={serverId} />
+    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+      <ChannelHeader
+        content={channel.name}
+        serverId={serverId}
+        type="channel"
+      />
+      <div className="flex-1">Fetch all chats</div>
+      <ChatInput type="channel" placeholder={channel.name} />
     </div>
   );
 };
