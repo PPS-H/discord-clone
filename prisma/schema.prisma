@@ -80,7 +80,7 @@ model Member {
   id   String     @id @default(auto()) @map("_id") @db.ObjectId
   role MemberRole
 
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId String  @db.ObjectId
 
   server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)

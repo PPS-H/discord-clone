@@ -86,8 +86,8 @@ const ServerSearch = ({ data, members }: ServerSearchProps) => {
             return (
               <div key={index}>
                 <CommandGroup heading={item.heading}>
-                  {item.items.map((channelName: string) => (
-                    <CommandItem>
+                  {item.items.map((channelName: string,index) => (
+                    <CommandItem key={index}>
                       {iconMap[item.type]}
                       {channelName}
                     </CommandItem>

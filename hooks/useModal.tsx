@@ -10,7 +10,8 @@ export type ModalType =
   | "createChannel"
   | "editChannel"
   | "deleteServer"
-  | "deleteChannel";
+  | "deleteChannel"
+  | "messageAttachment";
 
 export type ModalData = {
   server?: ServerWithChannelsWithMembers;
@@ -23,7 +24,7 @@ interface useModalProps {
   type: ModalType | null;
   isOpen: boolean;
   data?: ModalData;
-  onOpen: (type: ModalType, data: ModalData) => void;
+  onOpen: (type: ModalType, data?: ModalData) => void;
   onClose: () => void;
 }
 

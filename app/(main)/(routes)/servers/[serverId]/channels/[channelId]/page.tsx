@@ -25,7 +25,7 @@ const ChannelIdPage = async ({ params }: ChannelIdProps) => {
   if (!channel) return redirect("/");
 
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+    <div className="bg-white dark:bg-[#313338] flex flex-col h-[100vh]">
       <ChannelHeader
         content={channel.name}
         serverId={serverId}
