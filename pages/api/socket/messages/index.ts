@@ -78,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
     });
 
     res.status(201).json({
-      succcess: true,
+      success: true,
       message,
     });
   } catch (error) {

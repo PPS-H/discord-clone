@@ -1,5 +1,6 @@
-import ChannelHeader from "@/components/channels/channel-header";
+import ChannelHeader from "@/components/chat/chat-header";
 import ChatInput from "@/components/chat/chat-input";
+import ChatMessages from "@/components/chat/chat-messages";
 import { db } from "@/lib/db";
 import { initialProfile } from "@/lib/initial-profile";
 import { redirect } from "next/navigation";
@@ -31,7 +32,14 @@ const ChannelIdPage = async ({ params }: ChannelIdProps) => {
         serverId={serverId}
         type="channel"
       />
-      <div className="flex-1">Fetch all chats</div>
+      <div className="flex-1">
+        <ChatMessages
+          name={channel.name}
+          apiUrl="/api/messages"
+          paramKey="channelId"
+          paramValue={channelId}
+        />
+      </div>
       <ChatInput type="channel" placeholder={channel.name} />
     </div>
   );

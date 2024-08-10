@@ -1,4 +1,4 @@
-import ChannelHeader from "@/components/channels/channel-header";
+import ChannelHeader from "@/components/chat/chat-header";
 import { getOrCreateConvesation } from "@/lib/conversation";
 import { db } from "@/lib/db";
 import { initialProfile } from "@/lib/initial-profile";

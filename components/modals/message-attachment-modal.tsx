@@ -22,7 +22,7 @@ import { z } from "zod";
 
 import FileUpload from "@/components/file-upload";
 import useModal from "@/hooks/useModal";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
 const formSchema = z.object({
@@ -31,7 +31,11 @@ const formSchema = z.object({
 
 const MessageAttachmentModal = () => {
   const router = useRouter();
+  const params = useParams();
   const { type, isOpen, onClose } = useModal();
+
+  const serverId = params?.serverId;
+  const channelId = params?.channelId;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,11 +53,18 @@ const MessageAttachmentModal = () => {
     }
 
     try {
-      const response = await axios.patch(`/api/server/`, { messageAttachment });
-
-      form.reset();
-      router.refresh();
-      onClose();
+      const response = await axios.post(
+        `/api/socket/messages?serverId=${serverId}&channelId=${channelId}`,
+        {
+          content: messageAttachment,
+          fileUrl: messageAttachment,
+        }
+      );
+      if (response.data.success) {
+        form.reset();
+        router.refresh();
+        onClose();
+      }
     } catch (error) {
       console.log("Error while adding message attachment:", error);
     }
