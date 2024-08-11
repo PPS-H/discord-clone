@@ -11,11 +11,13 @@ export type ModalType =
   | "editChannel"
   | "deleteServer"
   | "deleteChannel"
-  | "messageAttachment";
+  | "messageAttachment"
+  | "deleteMessage";
 
 export type ModalData = {
   server?: ServerWithChannelsWithMembers;
   channelId?: string;
+  messageId?: string;
   channelName?: string;
   channelType?: ChannelType;
 };

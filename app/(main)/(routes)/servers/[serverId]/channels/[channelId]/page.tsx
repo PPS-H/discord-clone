@@ -26,20 +26,18 @@ const ChannelIdPage = async ({ params }: ChannelIdProps) => {
   if (!channel) return redirect("/");
 
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-[100vh]">
+    <div className="bg-white dark:bg-[#313338] flex flex-col max-h-screen h-[100vh]">
       <ChannelHeader
         content={channel.name}
         serverId={serverId}
         type="channel"
       />
-      <div className="flex-1">
         <ChatMessages
           name={channel.name}
           apiUrl="/api/messages"
           paramKey="channelId"
           paramValue={channelId}
         />
-      </div>
       <ChatInput type="channel" placeholder={channel.name} />
     </div>
   );

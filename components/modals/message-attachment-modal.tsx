@@ -106,7 +106,7 @@ const MessageAttachmentModal = () => {
                       onChange={field.onChange}
                     />
                   </FormControl>
-                </FormItem>
+                </FormItem> 
               )}
             />
             <DialogFooter>

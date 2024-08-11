@@ -29,7 +29,17 @@ const FileUpload = ({ endpoint, value, onChange }: fileUploadProps) => {
   return (
     <UploadDropzone
       endpoint={endpoint}
-      onClientUploadComplete={(res) => onChange(res[0].url)}
+      onClientUploadComplete={(res) => {
+        const uploadedFile = res[0];
+
+        const isImage = uploadedFile.type.includes("image");
+
+        if (isImage) {
+          onChange(uploadedFile.url);
+        } else {
+          console.error("Only image files are allowed.");
+        }
+      }}
       onUploadError={(error: Error) => {
         console.log(`ERROR! ${error.message}`);
       }}

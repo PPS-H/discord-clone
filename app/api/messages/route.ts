@@ -75,7 +75,7 @@ export const GET = async (req: Request) => {
 
     let nextCursor = null;
     if (messages.length == MESSAGE_BATCH) {
-      nextCursor = messages[length - 1].id;
+      nextCursor = messages[messages.length - 1].id;
     }
 
     return new NextResponse(

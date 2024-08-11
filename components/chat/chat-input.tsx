@@ -33,7 +33,6 @@ const ChatInput = ({ type, placeholder }: ChatInputProps) => {
   const serverId = params?.serverId;
   const channelId = params?.channelId;
 
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,7 +52,8 @@ const ChatInput = ({ type, placeholder }: ChatInputProps) => {
         { content: message }
       );
 
-      console.log("response:::",response);
+      console.log("response:::", response);
+      if (response.data.success) form.reset();
     } catch (error) {}
   };
   return (
