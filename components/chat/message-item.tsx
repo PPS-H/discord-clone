@@ -127,7 +127,10 @@ const MessageItem = ({
                 {!isEditing ? (
                   <div>
                     {isDeleted ? (
-                      <span className="flex items-center text-zinc-500 italic"><Ban size={15}/>{content}</span>
+                      <span className="flex items-center text-zinc-500 italic">
+                        <Ban size={15} />
+                        {content}
+                      </span>
                     ) : (
                       content
                     )}

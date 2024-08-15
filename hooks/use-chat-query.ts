@@ -22,14 +22,22 @@ export const useChatQuery = ({
       paramKey,
     ]}=${paramValue}`;
     const response = await fetch(url);
-    return response.json();
+    const data= await response.json();
+
+    console.log("response::::",data)
+
+    return data;
   };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery({
       queryKey: [queryKey],
       queryFn: fetchMessages,
-      getNextPageParam: ({ lastPage }) => lastPage?.nextCursor,
+      getNextPageParam: ({ lastPage }) => {
+        console.log("lastPage", lastPage);
+        return lastPage?.nextCursor;
+      },
+      initialPageParam: undefined,
       refetchInterval: isConnected ? false : 1000,
     });
 

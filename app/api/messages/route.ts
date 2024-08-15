@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
+import { NextApiResponseServerIo } from "@/types";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const MESSAGE_BATCH = 10;
 
-export const GET = async (req: Request) => {
+export const GET = async (req: Request, res: NextApiResponseServerIo) => {
   try {
     const { searchParams } = new URL(req.url);
 
@@ -78,14 +79,15 @@ export const GET = async (req: Request) => {
       nextCursor = messages[messages.length - 1].id;
     }
 
-    return new NextResponse(
-      JSON.stringify({
-        success: true,
-        messages,
-        nextCursor,
-      }),
-      { status: 200 }
-    );
+    const updateKey = `chat:${channelId}:messages:update`;
+
+    res?.socket?.server?.io?.emit(updateKey, messages);
+
+    return NextResponse.json({
+      // messages,
+      items: messages,
+      nextCursor,
+    });
   } catch (error) {
     console.log("Error while fetching the messages", error);
     return new NextResponse(

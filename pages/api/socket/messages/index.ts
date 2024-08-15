@@ -75,7 +75,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
         memberId: member.id,
         channelId: channelId as string,
       },
+      include: {
+        member: {
+          include: {
+            profile: true,
+          },
+        },
+      },
     });
+
+    const key = `chat:${channelId}:message`;
+    res?.socket?.server?.io?.emit(key, message);
 
     res.status(201).json({
       success: true,

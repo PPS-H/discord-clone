@@ -119,6 +119,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
       });
     }
 
+    const key = `chat:${channelId}:message:update`;
+    res?.socket?.server?.io.emit(key, message);
+
     res.status(200).json({
       success: true,
       message,
