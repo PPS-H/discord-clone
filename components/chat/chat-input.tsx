@@ -22,13 +22,14 @@ import { useParams } from "next/navigation";
 interface ChatInputProps {
   type: "channel" | "conversation";
   placeholder: string;
+  conversationId: string;
 }
 
 const formSchema = z.object({
   message: z.string(),
 });
 
-const ChatInput = ({ type, placeholder }: ChatInputProps) => {
+const ChatInput = ({ type, placeholder, conversationId }: ChatInputProps) => {
   const params = useParams();
   const serverId = params?.serverId;
   const channelId = params?.channelId;
@@ -46,13 +47,16 @@ const ChatInput = ({ type, placeholder }: ChatInputProps) => {
     const message = values.message;
     if (message == "") return;
 
-    try {
-      const response = await axios.post(
-        `/api/socket/messages?serverId=${serverId}&&channelId=${channelId}`,
-        { content: message }
-      );
+    let url = "";
 
-      console.log("response:::", response);
+    if (conversationId) {
+      url = `/api/socket/direct-messages?conversationId=${conversationId}`;
+    } else {
+      url = `/api/socket/messages?serverId=${serverId}&&channelId=${channelId}`;
+    }
+
+    try {
+      const response = await axios.post(url, { content: message });
       if (response.data.success) form.reset();
     } catch (error) {}
   };

@@ -25,6 +25,7 @@ interface MessageItemProps {
   messageId: string;
   content: string;
   fileUrl: string | null;
+  conversationId?: string | null;
   member: Member & { profile: Profile };
   ownerId: string;
   isEdited: boolean;
@@ -42,6 +43,7 @@ const MessageItem = ({
   messageId,
   content,
   fileUrl,
+  conversationId,
   member,
   ownerId,
   isEdited,
@@ -61,13 +63,16 @@ const MessageItem = ({
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { content } = values;
+    let url = "";
     try {
-      const response = await axios.patch(
-        `/api/socket/messages/${messageId}?serverId=${serverId}&channelId=${channelId}`,
-        {
-          content,
-        }
-      );
+      if (conversationId) {
+        url = `/api/socket/direct-messages/${messageId}?conversationId=${conversationId}`;
+      } else {
+        url = `/api/socket/messages/${messageId}?serverId=${serverId}&channelId=${channelId}`;
+      }
+      const response = await axios.patch(url, {
+        content,
+      });
 
       if (response.data.success) {
         form.reset();
@@ -94,7 +99,6 @@ const MessageItem = ({
   useEffect(() => {
     const handleEscKeyPress = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        console.log("Esc key pressed");
         setIsEditing(false);
       }
     };
@@ -205,7 +209,7 @@ const MessageItem = ({
           className="hidden group-hover:block absolute right-4 top-0 cursor-pointer"
           onClick={() =>
             onOpen("deleteMessage", {
-              channelId: channelId as string,
+              conversationId: conversationId as string,
               messageId,
             })
           }

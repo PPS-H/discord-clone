@@ -61,7 +61,7 @@ export const useChatSocket = ({
             }
           });
 
-          return { ...page, items:messages };
+          return { ...page, items: messages };
         });
 
         return { ...oldData, pages: updatedData };

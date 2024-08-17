@@ -1,12 +1,13 @@
 "use client";
 import { useChatQuery } from "@/hooks/use-chat-query";
 import { Hash, Loader2, ServerCrash } from "lucide-react";
-import { Fragment, useState } from "react";
+import { ElementRef, Fragment, useRef, useState } from "react";
 import ChatWelcome from "./chat-welcome";
 import MessageItem from "./message-item";
 import { Member, Message, Profile } from "@prisma/client";
 import moment from "moment-timezone";
 import { useChatSocket } from "@/hooks/use-chat-socket";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
 
 interface ChatMessagesProps {
   name: string;
@@ -31,10 +32,21 @@ const ChatMessages = ({
   const addKey = `chat:${paramValue}:message`;
   const updateKey = `chat:${paramValue}:message:update`;
 
+  const chatRef = useRef<ElementRef<"div">>(null);
+  const bottomRef = useRef<ElementRef<"div">>(null);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({ queryKey, apiUrl, paramKey, paramValue });
 
   useChatSocket({ queryKey, addKey, updateKey });
+
+  useChatScroll({
+    chatRef,
+    bottomRef,
+    shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
+    loadMore: fetchNextPage,
+    count: data?.pages?.[0]?.items?.length ?? 0,
+  });
 
   if (status == "error") {
     return (
@@ -45,18 +57,20 @@ const ChatMessages = ({
     );
   }
 
-
-  console.log("hasNextPage::::",hasNextPage,isFetchingNextPage)
+  console.log("hasNextPage::::", hasNextPage, isFetchingNextPage);
 
   // if (status == "success") setMessages(data?.pages[0]?.messages);
 
   console.log("data is :::", data);
 
   return (
-    <div className="flex-1 flex flex-col py-4 overflow-y-auto h-full">
+    <div
+      ref={chatRef}
+      className="flex-1 flex flex-col py-4 overflow-y-auto h-full"
+    >
       {!hasNextPage && <div className="flex-1" />}
       {!hasNextPage && <ChatWelcome name={name} type={paramKey} />}
-      {true && (
+      {hasNextPage && (
         <div className="flex justify-center">
           {isFetchingNextPage ? (
             <Loader2 className="h-6 w-6 text-zinc-500 animate-spin my-4" />
@@ -80,6 +94,9 @@ const ChatMessages = ({
                   messageId={message.id}
                   content={message.content}
                   fileUrl={message.fileUrl}
+                  conversationId={
+                    paramKey == "conversationId" ? paramValue : null
+                  }
                   member={message.member}
                   ownerId={message.memberId}
                   isEdited={message.createdAt != message.updatedAt}
@@ -92,6 +109,7 @@ const ChatMessages = ({
             </Fragment>
           ))}
       </div>
+      <div ref={bottomRef} />
     </div>
   );
 };

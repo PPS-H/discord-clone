@@ -11,7 +11,7 @@ import {
 import useModal from "@/hooks/useModal";
 import axios from "axios";
 import { Button } from "../ui/button";
-import { redirect, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const DeleteMessageModal = () => {
   const { type, isOpen, onClose, data } = useModal();
@@ -24,9 +24,14 @@ const DeleteMessageModal = () => {
 
   const handleDeleteMessage = async () => {
     try {
-      const response = await axios.delete(
-        `/api/socket/messages/${data?.messageId}?serverId=${serverId}&channelId=${data?.channelId}`
-      );
+      let url = "";
+
+      if (data?.conversationId) {
+        url = `/api/socket/direct-messages/${data?.messageId}?conversationId=${data?.conversationId}`;
+      } else {
+        url = `/api/socket/messages/${data?.messageId}?serverId=${serverId}&channelId=${data?.channelId}`;
+      }
+      const response = await axios.delete(url);
       if (response.data.success) {
         onClose();
         router.refresh();

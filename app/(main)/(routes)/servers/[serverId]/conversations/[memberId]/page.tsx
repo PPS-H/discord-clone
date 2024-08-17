@@ -1,4 +1,6 @@
 import ChannelHeader from "@/components/chat/chat-header";
+import ChatInput from "@/components/chat/chat-input";
+import ChatMessages from "@/components/chat/chat-messages";
 import { getOrCreateConvesation } from "@/lib/conversation";
 import { db } from "@/lib/db";
 import { initialProfile } from "@/lib/initial-profile";
@@ -43,18 +45,26 @@ const ConversationPage = async ({ params }: ConversationPageProps) => {
 
   if (!memberOne || !memberTwo) return redirect("/");
 
-  const conversations = await getOrCreateConvesation(
-    memberOne.id,
-    memberTwo.id
-  );
+  const conversation = await getOrCreateConvesation(memberOne.id, memberTwo.id);
 
   return (
-    <div>
+    <div className="bg-white dark:bg-[#313338] flex flex-col max-h-screen h-[100vh]">
       <ChannelHeader
         content={memberTwo.profile.username}
         serverId={params.serverId}
         type="conversation"
         imageUrl={memberTwo.profile.imageUrl}
+      />
+      <ChatMessages
+        name={memberTwo.profile.username}
+        apiUrl="/api/direct-messages"
+        paramKey="conversationId"
+        paramValue={conversation.id}
+      />
+      <ChatInput
+        type="conversation"
+        placeholder={memberTwo.profile.username}
+        conversationId={conversation.id}
       />
     </div>
   );

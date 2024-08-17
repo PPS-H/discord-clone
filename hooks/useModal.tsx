@@ -18,6 +18,7 @@ export type ModalData = {
   server?: ServerWithChannelsWithMembers;
   channelId?: string;
   messageId?: string;
+  conversationId?: string;
   channelName?: string;
   channelType?: ChannelType;
 };
